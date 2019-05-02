@@ -37,7 +37,7 @@ class UserTokens(object):
     self.expiry = expiry
 
   def needs_refresh(self):
-    return self.access_token is None or self.expiry is None or self.expiry > time.time()
+    return self.access_token is None or self.expiry is None or self.expiry < time.time()
 
   @staticmethod
   def from_refresh(refresh_token):
