@@ -5,6 +5,9 @@ import time
 from requests.exceptions import HTTPError
 
 
+SDK_VERSION = '0.0.8'
+
+
 class HTTPClient(object):
   def request(self, method, url, headers, data=None, auth=None):
     raise NotImplementedError('subclass must implement request')
