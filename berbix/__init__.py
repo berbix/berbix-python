@@ -96,6 +96,7 @@ class Client(object):
     if 'email' in kwargs: payload['email'] = kwargs['email']
     if 'phone' in kwargs: payload['phone'] = kwargs['phone']
     if 'customer_uid' in kwargs: payload['customer_uid'] = kwargs['customer_uid']
+    if 'template_key' in kwargs: payload['template_key'] = kwargs['template_key']
     return self.__fetch_tokens('/v0/transactions', payload)
 
   def create_user(self, email=None, phone=None, customer_uid=None):
