@@ -68,6 +68,7 @@ class Client(object):
     try:
       headers = {
         'Content-Type': 'application/json',
+        'User-Agent': 'BerbixPython/' + SDK_VERSION,
       }
       result = self.http_client.request(
         method='POST',
@@ -129,7 +130,10 @@ class Client(object):
   def __token_auth_request(self, method, tokens, path):
     self.refresh_if_necessary(tokens)
     try:
-      headers = {'Authorization': 'Bearer {0}'.format(tokens.access_token)}
+      headers = {
+        'Authorization': 'Bearer {0}'.format(tokens.access_token),
+        'User-Agent': 'BerbixPython/' + SDK_VERSION,
+      }
       result = self.http_client.request(
         method=method,
         url='{}{}'.format(self.api_host, path),
