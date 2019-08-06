@@ -1,11 +1,14 @@
 import json
 import requests
 import time
+import hmac
+import hashlib
 
 from requests.exceptions import HTTPError
 
 
 SDK_VERSION = '0.0.8'
+CLOCK_DRIFT = 300
 
 
 class HTTPClient(object):
@@ -153,3 +156,18 @@ class Client(object):
   def create_continuation(self, tokens):
     result = self.__token_auth_request('POST', tokens, '/v0/continuations')
     return result.get('value')
+
+  def validate_signature(self, secret, body, header):
+    parts = header.split(',')
+    # Version (parts[0]) is currently unused
+    timestamp = parts[1]
+    signature = parts[2]
+    if int(timestamp) < time.time() - CLOCK_DRIFT:
+      return False
+    message = '{},{},{}'.format(timestamp, secret, body)
+    digest = hmac.new(
+      secret,
+      msg=message,
+      digestmod=hashlib.sha256
+    ).hexdigest()
+    return digest == signature
