@@ -7,7 +7,7 @@ import hashlib
 from requests.exceptions import HTTPError
 
 
-SDK_VERSION = '0.0.8'
+SDK_VERSION = '0.0.9'
 CLOCK_DRIFT = 300
 
 
