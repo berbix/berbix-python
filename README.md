@@ -18,9 +18,9 @@ This Berbix Python library provides simple interfaces to interact with the Berbi
 
 ### Create a transaction
 
-    var transactionTokens = client.createTransaction({
-      "customer_uid": "interal_customer_uid", // ID for the user in internal database
-      "template_key": "your_template_key", // Template key for this transaction
+    transaction_tokens = client.create_transaction({
+      "customer_uid": "interal_customer_uid", # ID for the user in internal database
+      "template_key": "your_template_key", # Template key for this transaction
     })
 
 ### Create tokens from refresh token

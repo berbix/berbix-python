@@ -33,12 +33,13 @@ class UnexpectedResponse(Exception):
 
 
 class Tokens(object):
-  def __init__(self, refresh_token, access_token, client_token, expiry, transaction_id):
+  def __init__(self, refresh_token, access_token, client_token, expiry, transaction_id, response):
     self.access_token = access_token
     self.client_token = client_token
     self.refresh_token = refresh_token
     self.expiry = expiry
     self.transaction_id = transaction_id
+    self.response = response
 
   def refresh(self, access_token, client_token, expiry, transaction_id):
     self.access_token = access_token
@@ -51,7 +52,7 @@ class Tokens(object):
 
   @staticmethod
   def from_refresh(refresh_token):
-    return Tokens(refresh_token, None, None, None, None)
+    return Tokens(refresh_token, None, None, None, None, None)
 
 
 class Client(object):
@@ -87,7 +88,8 @@ class Client(object):
         data.get('access_token'),
         data.get('client_token'),
         data.get('expires_in') + time.time(),
-        data.get('transaction_id'))
+        data.get('transaction_id'),
+        data)
     except HTTPError as err:
       raise err
 
@@ -104,6 +106,7 @@ class Client(object):
     if 'phone' in kwargs: payload['phone'] = kwargs['phone']
     if 'customer_uid' in kwargs: payload['customer_uid'] = str(kwargs['customer_uid'])
     if 'template_key' in kwargs: payload['template_key'] = kwargs['template_key']
+    if 'hosted_options' in kwargs: payload['hosted_options'] = kwargs['hosted_options']
     return self.__fetch_tokens('/v0/transactions', payload)
 
   def create_user(self, email=None, phone=None, customer_uid=None):
