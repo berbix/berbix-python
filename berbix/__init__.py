@@ -56,17 +56,16 @@ class Tokens(object):
 
 
 class Client(object):
-  def __init__(self, client_id=None, client_secret=None, **kwargs):
-    self.client_id = client_id
-    self.client_secret = client_secret
+  def __init__(self, api_secret=None, **kwargs):
+    self.api_secret = api_secret
     self.api_host = kwargs.get('api_host', self.__api_host(kwargs.get('environment', 'production')))
     self.http_client = kwargs.get('http_client', RequestsClient())
 
-    if self.client_id is None:
-      raise ValueError('client_id must be provided when instantiating the Berbix client')
+    if self.api_secret is None:
+      self.api_secret = kwargs.get('client_secret')
 
-    if self.client_secret is None:
-      raise ValueError('client_secret must be provided when instantiating the Berbix client')
+    if self.api_secret is None:
+      raise ValueError('api_secret must be provided when instantiating the Berbix client')
 
   def __fetch_tokens(self, path, payload):
     try:
@@ -79,7 +78,7 @@ class Client(object):
         url='{}{}'.format(self.api_host, path),
         headers=headers,
         data=json.dumps(payload),
-        auth=(self.client_id, self.client_secret))
+        auth=(self.api_secret, ''))
       if result.status_code < 200 or result.status_code >= 300:
         raise UnexpectedResponse.from_response(json.loads(result.content))
       data = json.loads(result.content)
