@@ -101,7 +101,7 @@ The raw response object. This may include some non-token related fields.
 
 ###### `hosted_url: string`
 
-The hosted transaction URL. This value will only be set when creating a transaction if the `hosted_options` field is set.
+This is a member of the response object. Represents the hosted transaction URL. This value will only be set when creating a transaction if the `hosted_options` field is set.
 
 #### Static methods
 
