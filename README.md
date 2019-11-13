@@ -95,6 +95,14 @@ The internal Berbix ID number associated with the transaction.
 
 The time at which the access and client tokens will expire.
 
+##### `response: object`
+
+The raw response object. This may include some non-token related fields.
+
+###### `hosted_url: string`
+
+The hosted transaction URL. This value will only be set when creating a transaction if the `hosted_options` field is set.
+
 #### Static methods
 
 ##### `from_refresh(refreshToken: string): Tokens`
