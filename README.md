@@ -13,8 +13,7 @@ This Berbix Python library provides simple interfaces to interact with the Berbi
     import berbix
 
     client = berbix.Client(
-      client_id='your_client_id_here',
-      client_secret='your_client_secret_here')
+      api_secret='your_api_secret_here')
 
 ### Create a transaction
 
@@ -42,9 +41,7 @@ This Berbix Python library provides simple interfaces to interact with the Berbi
 
 Supported options:
 
-- `client_id` (required) - The client ID that can be found in your Berbix Dashboard.
-- `client_secret` (required) - The client secret that can be found in your Berbix Dashboard.
-- `environment` - Which environment the client uses, defaults to `:production`.
+- `api_secret` (required) - The API secret that can be found in your Berbix Dashboard.
 - `http_client` - An optional override for the default HTTP client.
 
 ##### `create_transaction(options): Tokens`
