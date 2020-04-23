@@ -108,23 +108,10 @@ class Client(object):
     if 'hosted_options' in kwargs: payload['hosted_options'] = kwargs['hosted_options']
     return self.__fetch_tokens('/v0/transactions', payload)
 
-  def create_user(self, email=None, phone=None, customer_uid=None):
-    payload = {}
-    if email is not None: payload['email'] = email
-    if phone is not None: payload['phone'] = phone
-    if customer_uid is not None: payload['customer_uid'] = customer_uid
-    return self.create_transaction(**payload)
-
   def refresh_tokens(self, tokens):
     return self.__fetch_tokens('/v0/tokens', {
       'refresh_token': tokens.refresh_token,
       'grant_type': 'refresh_token',
-    })
-
-  def exchange_code(self, code):
-    return self.__fetch_tokens('/v0/tokens', {
-      'code': code,
-      'grant_type': 'authorization_code',
     })
 
   def refresh_if_necessary(self, tokens):
@@ -132,19 +119,28 @@ class Client(object):
       refreshed = self.refresh_tokens(tokens)
       tokens.refresh(refreshed.access_token, refreshed.client_token, refreshed.expiry, refreshed.transaction_id)
 
-  def __token_auth_request(self, method, tokens, path):
+  def __token_auth_request(self, method, tokens, path, payload=None):
     self.refresh_if_necessary(tokens)
     try:
       headers = {
         'Authorization': 'Bearer {0}'.format(tokens.access_token),
         'User-Agent': 'BerbixPython/' + SDK_VERSION,
       }
+
+      data = None
+      if payload != None:
+        data = json.dumps(payload)
+        headers["Content-Type"] = "application/json";
+      
       result = self.http_client.request(
         method=method,
         url='{}{}'.format(self.api_host, path),
-        headers=headers)
+        headers=headers,
+        data=data)
       if result.status_code < 200 or result.status_code >= 300:
         raise UnexpectedResponse.from_response(json.loads(result.content))
+      elif result.status_code == 204:
+        return
       return json.loads(result.content)
     except HTTPError as err:
       raise err
@@ -152,12 +148,20 @@ class Client(object):
   def fetch_transaction(self, tokens):
     return self.__token_auth_request('GET', tokens, '/v0/transactions')
 
-  def fetch_user(self, tokens):
-    return self.fetch_transaction(tokens)
+  def delete_transaction(self, tokens):
+    return self.__token_auth_request('DELETE', tokens, '/v0/transactions')
 
-  def create_continuation(self, tokens):
-    result = self.__token_auth_request('POST', tokens, '/v0/continuations')
-    return result.get('value')
+  def update_transaction(self, tokens, **kwargs):
+    payload = {}
+    if 'action' in kwargs: payload['action'] = kwargs['action']
+    if 'note' in kwargs: payload['note'] = kwargs['note']
+    return self.__token_auth_request('PATCH', tokens, '/v0/transactions', payload)
+
+  def override_transaction(self, tokens, **kwargs):
+    payload = {}
+    if 'response_payload' in kwargs: payload['response_payload'] = kwargs['response_payload']
+    if 'flags' in kwargs: payload['flags'] = kwargs['flags']
+    return self.__token_auth_request('PATCH', tokens, '/v0/transactions/override', payload)
 
   def validate_signature(self, secret, body, header):
     parts = header.split(',')
@@ -173,3 +177,26 @@ class Client(object):
       digestmod=hashlib.sha256
     ).hexdigest()
     return digest == signature
+
+# Note: this method is deprecated. Use create_transaction instead.
+  def create_user(self, email=None, phone=None, customer_uid=None):
+    payload = {}
+    if email is not None: payload['email'] = email
+    if phone is not None: payload['phone'] = phone
+    if customer_uid is not None: payload['customer_uid'] = customer_uid
+    return self.create_transaction(**payload)
+
+# Note: this method is deprecated. Use refresh_tokens instead.
+  def exchange_code(self, code):
+    return self.__fetch_tokens('/v0/tokens', {
+      'code': code,
+      'grant_type': 'authorization_code',
+    })
+  # Note: this method is deprecated. Use fetch_transaction instead.
+  def fetch_user(self, tokens):
+    return self.fetch_transaction(tokens)
+
+  # Note: this method is deprecated.
+  def create_continuation(self, tokens):
+    result = self.__token_auth_request('POST', tokens, '/v0/continuations')
+    return result.get('value')
