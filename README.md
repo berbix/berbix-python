@@ -63,7 +63,7 @@ Supported options:
 
 Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the [Berbix developer docs](https://developers.berbix.com).
 
-##### `refresh_tokens(tokens: Tokens): void`
+##### `refresh_tokens(tokens: Tokens): Tokens`
 
 This is typically not needed to be called explicitly as it will be called by the higher-level
 SDK methods, but can be used to get fresh client or access tokens.
