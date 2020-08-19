@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="berbix",
-    version="0.0.12",
+    version="0.0.13",
     author="Eric Levine",
     author_email="eric@berbix.com",
     description="SDK for Berbix integrations",
