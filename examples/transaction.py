@@ -23,7 +23,7 @@ transaction = cl.fetch_transaction(tokens)
 pprint.pprint(transaction)
 
 completed_transaction = cl.override_transaction(
-    tokens, response_payload="us-dl", flags=["id_under_18", "id_under_21"])
+    tokens, response_payload="us-dl", flags=["id_under_18", "id_under_21"], override_fields={"date_of_birth": "2000-12-09"})
 
 pprint.pprint(completed_transaction)
 

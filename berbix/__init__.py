@@ -7,7 +7,7 @@ import hashlib
 from requests.exceptions import HTTPError
 
 
-SDK_VERSION = '0.0.13'
+SDK_VERSION = '0.0.14'
 CLOCK_DRIFT = 300
 
 
@@ -175,6 +175,9 @@ class Client(object):
             payload['response_payload'] = kwargs['response_payload']
         if 'flags' in kwargs:
             payload['flags'] = kwargs['flags']
+        if 'override_fields' in kwargs:
+            payload['override_fields'] = kwargs['override_fields']
+
         return self.__token_auth_request('PATCH', tokens, '/v0/transactions/override', payload)
 
     def validate_signature(self, secret, body, header):
