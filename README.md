@@ -56,8 +56,9 @@ Supported options:
 - `phone` - Previously verified phone number for a user.
 - `customer_uid` - An ID or identifier for the user in your system.
 - `template_key` - The template key for this transaction.
-- `hosted_options` - Optional configuration object for creating hosted transactions.
+- `hosted_options` - Optional configuration object for creating hosted transactions. The `hosted_options` object can optionally include the following fields:
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
+  - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
