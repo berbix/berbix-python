@@ -106,8 +106,14 @@ class Client(object):
             payload['phone'] = kwargs['phone']
         if 'customer_uid' in kwargs:
             payload['customer_uid'] = str(kwargs['customer_uid'])
+        else:
+            raise ValueError(
+                'customer_uid must be provided when creating a transaction')
         if 'template_key' in kwargs:
             payload['template_key'] = kwargs['template_key']
+        else:
+            raise ValueError(
+                'template_key must be provided when creating a transaction')
         if 'hosted_options' in kwargs:
             payload['hosted_options'] = kwargs['hosted_options']
         return self.__fetch_tokens('/v0/transactions', payload)
