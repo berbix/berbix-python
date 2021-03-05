@@ -31,6 +31,10 @@ class UnexpectedResponse(Exception):
     def from_response(data):
         return UnexpectedResponse(data.get('status'), data.get('reason'), data.get('message'))
 
+class HostedTransactionResponse(object):
+    def __init__(self, tokens, hosted_url):
+        self.tokens = tokens
+        self.hosted_url = hosted_url
 
 class Tokens(object):
     def __init__(self, refresh_token, access_token, client_token, expiry, transaction_id, response):
@@ -107,6 +111,15 @@ class Client(object):
         if 'hosted_options' in kwargs:
             payload['hosted_options'] = kwargs['hosted_options']
         return self.__fetch_tokens('/v0/transactions', payload)
+
+    def create_hosted_transaction(self, **kwargs):
+        if 'hosted_options' not in kwargs:
+            kwargs['hosted_options'] = {}
+
+        tokens = self.__fetch_tokens('/v0/transactions', kwargs)
+
+        return HostedTransactionResponse(tokens, tokens.response['hosted_url'])
+
 
     def refresh_tokens(self, tokens):
         return self.__fetch_tokens('/v0/tokens', {

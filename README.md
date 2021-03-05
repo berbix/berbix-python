@@ -60,6 +60,11 @@ Supported options:
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
   - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
 
+##### `create_hosted_transaction(options): HostedTransactionResponse`
+
+Creates a hosted transaction within Berbix to initialize the client SDK. This works the same as create_transaction except 
+that it returns an explicit `hosted_url` for hosted transactions. 
+
 ##### `fetch_transaction(tokens: Tokens): object`
 
 Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the [Berbix developer docs](https://developers.berbix.com).
@@ -139,6 +144,18 @@ This is a member of the response object. Represents the hosted transaction URL. 
 ##### `from_refresh(refreshToken: string): Tokens`
 
 Creates a tokens object from a refresh token, which can be passed to higher-level SDK methods. The SDK will handle refreshing the tokens for accessing relevant data.
+
+### HostedTransactionResponse
+
+#### Properties
+
+##### `tokens: Tokens`
+
+This is the tokens object for future SDK calls.
+
+###### `hosted_url: string`
+
+This is a member of the response object. Represents the hosted transaction URL.
 
 ## Publishing
 
