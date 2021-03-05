@@ -14,7 +14,8 @@ tokens = cl.create_transaction(
 pprint.pprint(tokens)
 
 hosted_transaction_response = cl.create_hosted_transaction(
-    customer_uid="this_is_a_customer_uid", template_key=os.environ["BERBIX_DEMO_TEMPLATE_KEY"])
+    customer_uid="this_is_a_customer_uid", template_key=os.environ["BERBIX_DEMO_TEMPLATE_KEY"], 
+    hosted_options={'redirect_url':'redirecturl'})
 
 pprint.pprint(hosted_transaction_response.hosted_url)
 

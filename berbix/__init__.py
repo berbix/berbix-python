@@ -192,9 +192,9 @@ class Client(object):
         signature = parts[2]
         if int(timestamp) < time.time() - CLOCK_DRIFT:
             return False
-        message = '{},{},{}'.format(timestamp, secret, body)
+        message = '{},{},{}'.format(timestamp, secret, body).encode('ascii')
         digest = hmac.new(
-            secret,
+            str.encode(secret),
             msg=message,
             digestmod=hashlib.sha256
         ).hexdigest()
