@@ -58,8 +58,7 @@ class Tokens(object):
 class Client(object):
     def __init__(self, api_secret=None, **kwargs):
         self.api_secret = api_secret
-        self.api_host = kwargs.get('api_host', self.__api_host(
-            kwargs.get('environment', 'production')))
+        self.api_host = kwargs.get('api_host', 'https://api.berbix.com')
         self.http_client = kwargs.get('http_client', RequestsClient())
 
         if self.api_secret is None:
@@ -94,13 +93,6 @@ class Client(object):
                 data)
         except HTTPError as err:
             raise err
-
-    def __api_host(self, env):
-        return {
-            'sandbox': 'https://api.sandbox.berbix.com',
-            'staging': 'https://api.staging.berbix.com',
-            'production': 'https://api.berbix.com',
-        }[env]
 
     def create_transaction(self, **kwargs):
         payload = {}

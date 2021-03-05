@@ -1,10 +1,10 @@
-import berbix
 import sys
 import os
 import pprint
 import time
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import berbix
 
 cl = berbix.Client(api_secret=os.environ['BERBIX_DEMO_API_SECRET'])
 
