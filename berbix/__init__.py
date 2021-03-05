@@ -186,30 +186,3 @@ class Client(object):
             digestmod=hashlib.sha256
         ).hexdigest()
         return digest == signature
-
-# Note: this method is deprecated. Use create_transaction instead.
-    def create_user(self, email=None, phone=None, customer_uid=None):
-        payload = {}
-        if email is not None:
-            payload['email'] = email
-        if phone is not None:
-            payload['phone'] = phone
-        if customer_uid is not None:
-            payload['customer_uid'] = customer_uid
-        return self.create_transaction(**payload)
-
-# Note: this method is deprecated. Use refresh_tokens instead.
-    def exchange_code(self, code):
-        return self.__fetch_tokens('/v0/tokens', {
-            'code': code,
-            'grant_type': 'authorization_code',
-        })
-    # Note: this method is deprecated. Use fetch_transaction instead.
-
-    def fetch_user(self, tokens):
-        return self.fetch_transaction(tokens)
-
-    # Note: this method is deprecated.
-    def create_continuation(self, tokens):
-        result = self.__token_auth_request('POST', tokens, '/v0/continuations')
-        return result.get('value')
