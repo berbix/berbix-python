@@ -126,7 +126,6 @@ class Client(object):
 
         return HostedTransactionResponse(tokens, tokens.response['hosted_url'])
 
-
     def refresh_tokens(self, tokens):
         return self.__fetch_tokens('/v0/tokens', {
             'refresh_token': tokens.refresh_token,
