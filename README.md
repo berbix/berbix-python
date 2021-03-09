@@ -56,14 +56,23 @@ Supported options:
 - `phone` - Previously verified phone number for a user.
 - `customer_uid` - An ID or identifier for the user in your system.
 - `template_key` - The template key for this transaction.
-- `hosted_options` - Optional configuration object for creating hosted transactions. The `hosted_options` object can optionally include the following fields:
+- Deprecated: `hosted_options` - Optional configuration object for creating hosted transactions. The `hosted_options` object can optionally include the following fields:
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
   - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
 
 ##### `create_hosted_transaction(options): HostedTransactionResponse`
 
-Creates a hosted transaction within Berbix to initialize the client SDK. This works the same as create_transaction except 
-that it returns an explicit `hosted_url` for hosted transactions. 
+Creates a hosted transaction within Berbix to initialize the client SDK. This works the same as create_transaction except `hosted_options` is a valid parameter and that it returns an explicit `hosted_url` for hosted transactions. 
+
+Supported options:
+
+- `email` - Previously verified email address for a user.
+- `phone` - Previously verified phone number for a user.
+- `customer_uid` - An ID or identifier for the user in your system.
+- `template_key` - The template key for this transaction.
+- `hosted_options` - Optional configuration object for creating hosted transactions. The `hosted_options` object can optionally include the following fields:
+  - `completion_email` - Email address to which completion alerts will be sent for this transaction.
+  - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
@@ -135,7 +144,7 @@ The time at which the access and client tokens will expire.
 
 The raw response object. This may include some non-token related fields.
 
-###### `hosted_url: string`
+###### Deprecated: `hosted_url: string`
 
 This is a member of the response object. Represents the hosted transaction URL. This value will only be set when creating a transaction if the `hosted_options` field is set.
 
