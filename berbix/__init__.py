@@ -7,7 +7,7 @@ import hashlib
 from requests.exceptions import HTTPError
 
 
-SDK_VERSION = '0.0.16'
+SDK_VERSION = '1.0.0'
 CLOCK_DRIFT = 300
 
 
@@ -31,6 +31,10 @@ class UnexpectedResponse(Exception):
     def from_response(data):
         return UnexpectedResponse(data.get('status'), data.get('reason'), data.get('message'))
 
+class HostedTransactionResponse(object):
+    def __init__(self, tokens, hosted_url):
+        self.tokens = tokens
+        self.hosted_url = hosted_url
 
 class Tokens(object):
     def __init__(self, refresh_token, access_token, client_token, expiry, transaction_id, response):
@@ -58,8 +62,7 @@ class Tokens(object):
 class Client(object):
     def __init__(self, api_secret=None, **kwargs):
         self.api_secret = api_secret
-        self.api_host = kwargs.get('api_host', self.__api_host(
-            kwargs.get('environment', 'production')))
+        self.api_host = kwargs.get('api_host', 'https://api.berbix.com')
         self.http_client = kwargs.get('http_client', RequestsClient())
 
         if self.api_secret is None:
@@ -95,13 +98,6 @@ class Client(object):
         except HTTPError as err:
             raise err
 
-    def __api_host(self, env):
-        return {
-            'sandbox': 'https://api.sandbox.berbix.com',
-            'staging': 'https://api.staging.berbix.com',
-            'production': 'https://api.berbix.com',
-        }[env]
-
     def create_transaction(self, **kwargs):
         payload = {}
         if 'email' in kwargs:
@@ -110,11 +106,25 @@ class Client(object):
             payload['phone'] = kwargs['phone']
         if 'customer_uid' in kwargs:
             payload['customer_uid'] = str(kwargs['customer_uid'])
+        else:
+            raise ValueError(
+                'customer_uid must be provided when creating a transaction')
         if 'template_key' in kwargs:
             payload['template_key'] = kwargs['template_key']
+        else:
+            raise ValueError(
+                'template_key must be provided when creating a transaction')
         if 'hosted_options' in kwargs:
             payload['hosted_options'] = kwargs['hosted_options']
         return self.__fetch_tokens('/v0/transactions', payload)
+
+    def create_hosted_transaction(self, **kwargs):
+        if 'hosted_options' not in kwargs:
+            kwargs['hosted_options'] = {}
+
+        tokens = self.__fetch_tokens('/v0/transactions', kwargs)
+
+        return HostedTransactionResponse(tokens, tokens.response['hosted_url'])
 
     def refresh_tokens(self, tokens):
         return self.__fetch_tokens('/v0/tokens', {
@@ -187,37 +197,10 @@ class Client(object):
         signature = parts[2]
         if int(timestamp) < time.time() - CLOCK_DRIFT:
             return False
-        message = '{},{},{}'.format(timestamp, secret, body)
+        message = '{},{},{}'.format(timestamp, secret, body).encode('ascii')
         digest = hmac.new(
-            secret,
+            str.encode(secret),
             msg=message,
             digestmod=hashlib.sha256
         ).hexdigest()
         return digest == signature
-
-# Note: this method is deprecated. Use create_transaction instead.
-    def create_user(self, email=None, phone=None, customer_uid=None):
-        payload = {}
-        if email is not None:
-            payload['email'] = email
-        if phone is not None:
-            payload['phone'] = phone
-        if customer_uid is not None:
-            payload['customer_uid'] = customer_uid
-        return self.create_transaction(**payload)
-
-# Note: this method is deprecated. Use refresh_tokens instead.
-    def exchange_code(self, code):
-        return self.__fetch_tokens('/v0/tokens', {
-            'code': code,
-            'grant_type': 'authorization_code',
-        })
-    # Note: this method is deprecated. Use fetch_transaction instead.
-
-    def fetch_user(self, tokens):
-        return self.fetch_transaction(tokens)
-
-    # Note: this method is deprecated.
-    def create_continuation(self, tokens):
-        result = self.__token_auth_request('POST', tokens, '/v0/continuations')
-        return result.get('value')

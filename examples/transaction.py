@@ -1,10 +1,10 @@
-import berbix
 import sys
 import os
 import pprint
 import time
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import berbix
 
 cl = berbix.Client(api_secret=os.environ['BERBIX_DEMO_API_SECRET'])
 
@@ -12,6 +12,12 @@ tokens = cl.create_transaction(
     customer_uid="this_is_a_customer_uid", template_key=os.environ["BERBIX_DEMO_TEMPLATE_KEY"])
 
 pprint.pprint(tokens)
+
+hosted_transaction_response = cl.create_hosted_transaction(
+    customer_uid="this_is_a_customer_uid", template_key=os.environ["BERBIX_DEMO_TEMPLATE_KEY"], 
+    hosted_options={'redirect_url':'redirecturl'})
+
+pprint.pprint(hosted_transaction_response.hosted_url)
 
 time.sleep(5)
 
